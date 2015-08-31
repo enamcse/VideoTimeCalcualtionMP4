@@ -1,0 +1,487 @@
+/*
+ * Copyright 2015 Enamul.
+ *
+ * Most of my softwares are open for educational purpose, but some are 
+ * confidential. So, before using it openly drop me some lines at
+ *
+ *      enamsustcse@gmail.com
+ *
+ * I do not guarantee that the software would work properly. There could
+ * remain bugs. If you found any of them, kindly report me.
+ * If you need to use this or some part of it, use it at your own risk.
+ * This software is not a professionally developed, so commercial use 
+ * is not approved by default.
+ */
+package videotimecalcualtionmp4;
+
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.io.File;
+import java.io.FileFilter;
+import javax.swing.JFileChooser;
+import java.io.IOException;
+import java.util.Date;
+import java.util.Vector;
+import javax.swing.table.DefaultTableModel;
+import player.PlayerControl;
+import player.PlayerFactory;
+
+/**
+ *
+ * @author Enamul
+ */
+public class MainFrame extends javax.swing.JFrame {
+
+    private final DefaultTableModel model;
+
+    public long getDuration(File file) throws IOException {
+        PlayerControl playerControl = PlayerFactory.createLightweightMPEG4Player();
+        playerControl.open(file.getAbsolutePath());
+        return playerControl.getDuration();
+    }
+
+    /**
+     * Creates new form ShowProblemStatus
+     */
+    public MainFrame() {
+
+        super("Rank List");
+        initComponents();
+        model = (DefaultTableModel) jTableStatus.getModel();
+        //adjust screen
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        double width = screenSize.getWidth();
+        double height = screenSize.getHeight();
+        setSize((int) (9 * width / 10), (int) (9 * height / 10));
+        setLocation((int) Math.max((width - getWidth()) / 2, 0), (int) Math.max((height - getHeight()) / 2, 0));
+
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+
+    /**
+     * Loads the submission queue information as well as time elapsed time of
+     * the contest from Judge.
+     */
+    void process(File file) {
+        FileFilter filter = new FileFilter() {
+            @Override
+            public boolean accept(File file) {
+                return file.toString().endsWith(".mp4");
+            }
+        };
+        File files[] = file.listFiles(filter);
+
+        int counter = 1;
+
+        for (File currentFile : files) {
+            Vector vect = new Vector();
+            vect.add(counter++);
+            vect.add(currentFile.toString());
+            vect.add(false);
+
+            model.addRow(vect);
+        }
+    }
+
+    String getString(long duration) {
+        String ret = "";
+
+        if (duration / 86400000 > 0) {
+            int d = (int) (duration / 86400000);
+            ret += String.format("%d Days ", d);
+            duration -= (d * 86400000);
+        }
+
+        if (duration / 3600000 > 0) {
+            int h = (int) (duration / 3600000);
+            ret += String.format("%d Hours ", h);
+            duration -= (h * 3600000);
+        }
+
+        if (duration / 60000 > 0) {
+            int m = (int) (duration / 60000);
+            ret += String.format("%d Mins ", m);
+            duration -= (m * 60000);
+        }
+
+        if (duration / 1000 > 0) {
+            int s = (int) (duration / 1000);
+            ret += String.format("%d Secs ", s);
+            duration -= (s * 1000);
+        }
+
+        ret += String.format("%d Milliseconds", duration);
+
+        return ret;
+    }
+
+    void calculateTime() {
+        System.out.println("Here it came!");
+        long totalDuration = 0;
+        Date bef = new Date();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            if ((boolean) model.getValueAt(i, 2) == false) {
+                continue;
+            }
+            //System.out.println("Paying with: "+model.getValueAt(i, 1).toString());
+
+            long duration = 0;
+            try {
+                duration = getDuration(new File(model.getValueAt(i, 1).toString()));
+            } catch (Exception ex) {
+                System.out.println("problem with: " + model.getValueAt(i, 1).toString());
+            }
+            totalDuration += duration;
+        }
+        Date aft = new Date();
+        long exec = aft.getTime() - bef.getTime();
+        jLabelExecTime.setText(String.format("%d ms", exec));
+//        System.out.println("It told nothing!");
+        jLabelCalculatedTime.setText(getString(totalDuration));
+    }
+
+    /**
+     * It would update the table as the column name and data table provided.
+     *
+     * @param columnNames heading of the columns
+     * @param data 2D data grid.
+     */
+    private void prepareTable(Object[] columnNames, Object[][] data) {
+        jTableStatus.setModel(new javax.swing.table.DefaultTableModel(
+                data,
+                columnNames
+        ) {
+        });
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jFileChooser = new javax.swing.JFileChooser();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTableStatus = new javax.swing.JTable();
+        jButtonCalculate = new javax.swing.JButton();
+        jTextFieldFilePath = new javax.swing.JTextField();
+        jButtonBrowse = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        jLabelRankListOfTheContest1 = new javax.swing.JLabel();
+        jLabelCalculatedTime = new javax.swing.JLabel();
+        jLabelCalculatedTime1 = new javax.swing.JLabel();
+        jLabelExecTime = new javax.swing.JLabel();
+        jButtonCheckAll = new javax.swing.JButton();
+        jButtonUnchekAll = new javax.swing.JButton();
+        jButtonExit = new javax.swing.JButton();
+        jButtonCheckSelected = new javax.swing.JButton();
+        jButtonUncheckSelected = new javax.swing.JButton();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenuItemExit = new javax.swing.JMenuItem();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        jTableStatus.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "No", "Video File Name", "Status"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(jTableStatus);
+        if (jTableStatus.getColumnModel().getColumnCount() > 0) {
+            jTableStatus.getColumnModel().getColumn(0).setMinWidth(50);
+            jTableStatus.getColumnModel().getColumn(0).setPreferredWidth(50);
+            jTableStatus.getColumnModel().getColumn(0).setMaxWidth(50);
+            jTableStatus.getColumnModel().getColumn(2).setMinWidth(60);
+            jTableStatus.getColumnModel().getColumn(2).setPreferredWidth(60);
+            jTableStatus.getColumnModel().getColumn(2).setMaxWidth(60);
+        }
+
+        jButtonCalculate.setText("Calculate");
+        jButtonCalculate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCalculateActionPerformed(evt);
+            }
+        });
+
+        jTextFieldFilePath.setText("F:\\Algorithms for DNA Sequencing");
+        jTextFieldFilePath.setMaximumSize(new java.awt.Dimension(6, 20));
+        jTextFieldFilePath.setName(""); // NOI18N
+
+        jButtonBrowse.setText("Browse");
+        jButtonBrowse.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonBrowseActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText("Source File:");
+
+        jLabelRankListOfTheContest1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabelRankListOfTheContest1.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabelRankListOfTheContest1.setText("Total Video Time:");
+
+        jLabelCalculatedTime.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabelCalculatedTime.setForeground(new java.awt.Color(204, 0, 51));
+        jLabelCalculatedTime.setText("0 Milliseconds");
+
+        jLabelCalculatedTime1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabelCalculatedTime1.setForeground(new java.awt.Color(51, 51, 255));
+        jLabelCalculatedTime1.setText("Execution Time:");
+
+        jLabelExecTime.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabelExecTime.setForeground(new java.awt.Color(0, 153, 51));
+        jLabelExecTime.setText("0ms");
+
+        jButtonCheckAll.setText("Check all");
+        jButtonCheckAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCheckAllActionPerformed(evt);
+            }
+        });
+
+        jButtonUnchekAll.setText("Uncheck all");
+        jButtonUnchekAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonUnchekAllActionPerformed(evt);
+            }
+        });
+
+        jButtonExit.setText("Exit");
+        jButtonExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonExitActionPerformed(evt);
+            }
+        });
+
+        jButtonCheckSelected.setText("Check Selected");
+        jButtonCheckSelected.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCheckSelectedActionPerformed(evt);
+            }
+        });
+
+        jButtonUncheckSelected.setText("Uncheck Selected");
+        jButtonUncheckSelected.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonUncheckSelectedActionPerformed(evt);
+            }
+        });
+
+        jMenu1.setText("File");
+
+        jMenuItemExit.setText("Exit");
+        jMenuItemExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemExitActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItemExit);
+
+        jMenuBar1.add(jMenu1);
+
+        setJMenuBar(jMenuBar1);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jLabelRankListOfTheContest1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabelCalculatedTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabelCalculatedTime1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabelExecTime, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextFieldFilePath, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonBrowse))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jButtonCheckAll, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonUnchekAll, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonCheckSelected)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonUncheckSelected)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 270, Short.MAX_VALUE)
+                        .addComponent(jButtonCalculate, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(75, 75, 75)
+                        .addComponent(jButtonExit, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelRankListOfTheContest1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabelCalculatedTime, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabelCalculatedTime1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabelExecTime, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jTextFieldFilePath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonBrowse))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonCalculate)
+                    .addComponent(jButtonCheckAll)
+                    .addComponent(jButtonUnchekAll)
+                    .addComponent(jButtonExit)
+                    .addComponent(jButtonCheckSelected)
+                    .addComponent(jButtonUncheckSelected))
+                .addContainerGap())
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jButtonCalculateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCalculateActionPerformed
+        // TODO add your handling code here:
+        calculateTime();
+    }//GEN-LAST:event_jButtonCalculateActionPerformed
+
+    private void jButtonBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBrowseActionPerformed
+        // TODO add your handling code here:
+        int retrival;
+        if (!jTextFieldFilePath.getText().isEmpty()) {
+            jFileChooser.setCurrentDirectory(new File(jTextFieldFilePath.getText()));
+        }
+        jFileChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
+        retrival = jFileChooser.showOpenDialog(this);
+
+        if (retrival == JFileChooser.APPROVE_OPTION) {
+            try {
+                File fileName = jFileChooser.getSelectedFile();
+                jTextFieldFilePath.setText(fileName.toString());
+                process(fileName);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_jButtonBrowseActionPerformed
+
+    private void jButtonCheckAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCheckAllActionPerformed
+        // TODO add your handling code here:
+        for (int i = 0; i < model.getRowCount(); i++) {
+            model.setValueAt(true, i, 2);
+        }
+    }//GEN-LAST:event_jButtonCheckAllActionPerformed
+
+    private void jButtonUnchekAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUnchekAllActionPerformed
+        // TODO add your handling code here:
+        for (int i = 0; i < model.getRowCount(); i++) {
+            model.setValueAt(false, i, 2);
+        }
+    }//GEN-LAST:event_jButtonUnchekAllActionPerformed
+
+    private void jButtonExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExitActionPerformed
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_jButtonExitActionPerformed
+
+    private void jButtonCheckSelectedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCheckSelectedActionPerformed
+        // TODO add your handling code here:
+        int[] selected = jTableStatus.getSelectedRows();
+        for (int i : selected) {
+            model.setValueAt(true, i, 2);
+        }
+    }//GEN-LAST:event_jButtonCheckSelectedActionPerformed
+
+    private void jButtonUncheckSelectedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUncheckSelectedActionPerformed
+        // TODO add your handling code here:
+        int[] selected = jTableStatus.getSelectedRows();
+        for (int i : selected) {
+            model.setValueAt(false, i, 2);
+        }
+    }//GEN-LAST:event_jButtonUncheckSelectedActionPerformed
+
+    private void jMenuItemExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemExitActionPerformed
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_jMenuItemExitActionPerformed
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Windows".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new MainFrame().setVisible(true);
+            }
+        });
+    }
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonBrowse;
+    private javax.swing.JButton jButtonCalculate;
+    private javax.swing.JButton jButtonCheckAll;
+    private javax.swing.JButton jButtonCheckSelected;
+    private javax.swing.JButton jButtonExit;
+    private javax.swing.JButton jButtonUncheckSelected;
+    private javax.swing.JButton jButtonUnchekAll;
+    private javax.swing.JFileChooser jFileChooser;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabelCalculatedTime;
+    private javax.swing.JLabel jLabelCalculatedTime1;
+    private javax.swing.JLabel jLabelExecTime;
+    private javax.swing.JLabel jLabelRankListOfTheContest1;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItemExit;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTableStatus;
+    private javax.swing.JTextField jTextFieldFilePath;
+    // End of variables declaration//GEN-END:variables
+}
